@@ -4,7 +4,7 @@ import 'dart:async';
 
 class numDb {
   /**
-   * index | date | num1 | num2 | num3 | num4 | num5 | num6 | bonus|
+   * run_no | date | num1 | num2 | num3 | num4 | num5 | num6 | bonus|
    * ---------------------------------------------------------------
    * 1     | 2021 | 1    | 2    | 3    | 4    | 5    | 6    | 7    |
    */
@@ -18,7 +18,8 @@ class numDb {
   // create table sql
   String createTableSql = '''
     CREATE TABLE $tableName (
-      'index' INTEGER PRIMARY KEY AUTOINCREMENT,
+      'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+      'run_no' INTEGER,
       'date' TEXT,
       'n1' INTEGER,
       'n2' INTEGER,
@@ -91,9 +92,9 @@ class numDb {
   }
 
   // 데이터 삭제.
-  Future<void> deleteData(int index) async {
+  Future<void> deleteData(int run_no) async {
     final db = await _openDb();
-    await db.delete(tableName, where: 'index = ?', whereArgs: [index]);
+    await db.delete(tableName, where: 'run_no = ?', whereArgs: [run_no]);
   }
 
   // 사용자 쿼리문으로 데이터 조회.

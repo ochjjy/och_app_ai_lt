@@ -29,7 +29,8 @@ class scrapNum {
       'User-Agent': 'Mozilla/5.0 (Linux; Android 10; SM-G965N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Mobile Safari/537.36'
     };
     final response = await http.get(Uri.parse(url), headers: httpHeaders);
-    final document = parse(response.body).toString().split('\n');
+    print('response: ${response.body}');
+    final document = response.body.toString().split('\n');
 
     print('document: ${document}');
 
@@ -40,8 +41,15 @@ class scrapNum {
 
     List<int> numList = [];
     for (var element in document) {
+      print('====> element: $element');
       // insert data to db
       if (element != '') {
+        // remove '\n'
+        element = element.replaceAll('\n', '');
+
+        // replace '.' to '-'
+        element = element.replaceAll('.', '-');
+
         // split data by ','
         List<String> raw_data = element.split(',');
         print('raw_data: $raw_data');
@@ -49,10 +57,13 @@ class scrapNum {
         if (raw_data[0] == 'index') {
           continue;
         }
+        // debug date string
+        print('date: ${raw_data[1]}');
+
         // insert data to db
         await db.insertData({
-          'index': raw_data[0],
-          'date': raw_data[1],
+          'run_no': raw_data[0],
+          'date': '"${raw_data[1]}"',
           'n1': raw_data[2],
           'n2': raw_data[3],
           'n3': raw_data[4],
