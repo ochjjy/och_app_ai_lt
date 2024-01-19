@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import '/utils/scrap_num.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  scrapNum scrap = scrapNum();
+  scrap.getInitData();
 
   // remove after 3 seconds
   Future.delayed(const Duration(seconds: 3), () {

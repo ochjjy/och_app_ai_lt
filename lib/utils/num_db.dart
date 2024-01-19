@@ -14,51 +14,26 @@ class numDb {
   // table name
   static final String tableName = 'num';
 
-  // column names
-  static final col_name = {
-    'index': 'index',
-    'date': 'date',
-    'num1': 'num1',
-    'num2': 'num2',
-    'num3': 'num3',
-    'num4': 'num4',
-    'num5': 'num5',
-    'num6': 'num6',
-    'bonus': 'bonus',
-  };
-  
-  // column types
-  static final col_type = {
-    'index': 'INTEGER PRIMARY KEY AUTOINCREMENT',
-    'date': 'TEXT',
-    'num1': 'INTEGER',
-    'num2': 'INTEGER',
-    'num3': 'INTEGER',
-    'num4': 'INTEGER',
-    'num5': 'INTEGER',
-    'num6': 'INTEGER',
-    'bonus': 'INTEGER',
-  };
 
   // create table sql
-  static final String createTableSql = '''
+  String createTableSql = '''
     CREATE TABLE $tableName (
-      ${col_name['index']} ${col_type['index']},
-      ${col_name['date']} ${col_type['date']},
-      ${col_name['num1']} ${col_type['num1']},
-      ${col_name['num2']} ${col_type['num2']},
-      ${col_name['num3']} ${col_type['num3']},
-      ${col_name['num4']} ${col_type['num4']},
-      ${col_name['num5']} ${col_type['num5']},
-      ${col_name['num6']} ${col_type['num6']},
-      ${col_name['bonus']} ${col_type['bonus']}
+      'index' INTEGER PRIMARY KEY AUTOINCREMENT,
+      'date' TEXT,
+      'n1' INTEGER,
+      'n2' INTEGER,
+      'n3' INTEGER,
+      'n4' INTEGER,
+      'n5' INTEGER,
+      'n6' INTEGER,
+      'nb' INTEGER
     )
   ''';
 
   // DB 생성.
   Future<Database> _openDb() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, dbName);
+    final path = '$dbPath/$dbName';
 
     final db = await openDatabase(
       path,
@@ -69,30 +44,56 @@ class numDb {
       },
       onUpgrade: (Database db, int oldVersion, int newVersion) async {},
     );
+
+    return db;
   }
 
   // 태이블 생성.
   Future<void> createTable() async {
     final db = await _openDb();
-    await db.execute(createTableSql);
+    try {
+      await db.execute(createTableSql);
+      print('create table success');
+    } catch (e) {
+      print('create table error: $e');
+    }
+    return;
   }
 
   // 데이터 추가.
   Future<void> insertData(Map<String, dynamic> data) async {
     final db = await _openDb();
-    await db.insert(tableName, data);
+    var sql_str = 'INSERT INTO $tableName (';
+    var sql_val = 'VALUES (';
+    data.forEach((key, value) {
+      sql_str += '$key, ';
+      sql_val += '$value, ';
+    });
+    sql_str = sql_str.substring(0, sql_str.length - 2) + ')';
+    sql_val = sql_val.substring(0, sql_val.length - 2) + ')';
+    await db.execute(sql_str + sql_val);
+    print('insert result');
+    return;
   }
 
   // 데이터 변경.
   Future<void> updateData(Map<String, dynamic> data) async {
     final db = await _openDb();
-    await db.update(tableName, data);
+    var sql_str = 'UPDATE $tableName SET ';
+    data.forEach((key, value) {
+      sql_str += '$key = $value, ';
+    });
+    sql_str = sql_str.substring(0, sql_str.length - 2);
+
+    await db.execute(sql_str);
+    print('update result');
+    return ;
   }
 
   // 데이터 삭제.
   Future<void> deleteData(int index) async {
     final db = await _openDb();
-    await db.delete(tableName, where: '${col_name['index']} = ?', whereArgs: [index]);
+    await db.delete(tableName, where: 'index = ?', whereArgs: [index]);
   }
 
   // 사용자 쿼리문으로 데이터 조회.
