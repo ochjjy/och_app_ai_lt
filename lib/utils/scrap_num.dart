@@ -60,6 +60,13 @@ class scrapNum {
         // debug date string
         print('date: ${raw_data[1]}');
 
+        // CHECK: if data is already exist  
+        final isExist = await db.checkDuplicate(raw_data[0], raw_data[1]);
+        if (isExist) {
+          print('data is already exist');
+          continue;
+        }
+
         // insert data to db
         await db.insertData({
           'run_no': raw_data[0],

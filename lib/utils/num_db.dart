@@ -1,4 +1,6 @@
 // sql lite database for storing numbers
+import 'dart:ffi';
+
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
@@ -59,6 +61,18 @@ class numDb {
       print('create table error: $e');
     }
     return;
+  }
+  
+  // check duplicate by date, run_no
+  Future<bool> checkDuplicate(String run_no, String date) async {
+    final db = await _openDb();
+    // check if table exists and date, run_no exists
+    var sql = 'SELECT * FROM $tableName WHERE run_no = $run_no AND date = "$date"';
+    var result = await db.rawQuery(sql);
+    if (result.length > 0) {
+      return true;
+    }
+    return false;
   }
 
   // 데이터 추가.
