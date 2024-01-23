@@ -116,5 +116,44 @@ class numDb {
     final db = await _openDb();
     return await db.rawQuery(query);
   }
+
+  // NUM1 ~ NUM6 조합으로 일치하는 데이터 조회.
+  Future<String> selectDataByNums(
+      int num1, int num2, int num3, int num4, int num5, int num6) async {
+    final db = await _openDb();
+    var sql = 'SELECT * FROM $tableName WHERE ';
+    sql += 'n1 = $num1 AND ';
+    sql += 'n2 = $num2 AND ';
+    sql += 'n3 = $num3 AND ';
+    sql += 'n4 = $num4 AND ';
+    sql += 'n5 = $num5 AND ';
+    sql += 'n6 = $num6';
+    var result = await db.rawQuery(sql);
+    var str_num_data = '당첨번호\n';
+    result.forEach((element) {
+      str_num_data += element.toString() + '\n';
+    });
+    print('str_num_data>> : $str_num_data');
+    return str_num_data;
+  }
+
+  // 회차번호로 데이터 조회.
+  Future<String> selectDataByRunNo(int run_no) async {
+    final db = await _openDb();
+    var sql = 'SELECT * FROM $tableName WHERE run_no = $run_no';
+    var result = await db.rawQuery(sql);
+    print('result: $result');
+    var str_num_data = '$run_no 회차 당첨번호\n';
+    if (result.length == 0) {
+      str_num_data += '조회된 데이터가 없습니다.';
+    } else {
+      result.forEach((element) {
+        str_num_data += element.toString() + '\n';
+      });
+    }
+    print('str_num_data: $str_num_data');
+    return str_num_data;
+  }
+
 }
 
